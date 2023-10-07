@@ -1,6 +1,6 @@
 import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useContext, useState } from 'react'
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { UserType } from '../screens/userContext';
 
 const User = ({ item }) => {
@@ -17,9 +17,10 @@ const User = ({ item }) => {
 
             if (response.ok) {
                 setRequestSent(true)
+                Alert.alert('Success', 'Friend Request Sent', [{ text: 'Ok' }])
             }
         } catch (err) {
-            Alert.alert('Error: ', err.message, [{ text: 'ok' }])
+            Alert.alert('Error: ', err.message, [{ text: 'Ok' }])
             console.log(err)
         }
     }
@@ -56,12 +57,27 @@ const User = ({ item }) => {
                     shadowRadius: 2.62,
                     elevation: 4,
                 }}>
-                <Text style={{ marginRight: 5 }}>
-                    <Ionicons name="person-add" size={20} color="black" />
-                </Text>
-                <Text style={{ textAlign: 'center', fontSize: 13 }}>
-                    Add Friend
-                </Text>
+                {
+                    requestSent ? (
+                        <>
+                            <Text style={{ marginHorizontal: 9 }}>
+                                <MaterialIcons name="done" size={24} color="black" />
+                            </Text>
+                            <Text style={{ textAlign: 'center', fontSize: 13 }}>
+                                Sent
+                            </Text>
+                        </>
+                    ) : (
+                        <>
+                            <Text style={{ marginRight: 5 }}>
+                                <Ionicons name="person-add" size={20} color="black" />
+                            </Text>
+                            <Text style={{ textAlign: 'center', fontSize: 13 }}>
+                                Add Friend
+                            </Text>
+                        </>
+                    )
+                }
             </Pressable>
         </Pressable>
     )

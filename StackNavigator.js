@@ -24,7 +24,7 @@ const StackNavigator = () => {
                     name="Home"
                     component={HomeScreen} />
                 <Stack.Screen
-                    name="Friends"
+                    name="Friend Requests"
                     component={FriendsScreen} />
             </Stack.Navigator>
         </NavigationContainer>

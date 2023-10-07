@@ -27,7 +27,7 @@ const HomeScreen = () => {
                         color="black"
                     />
                     <Ionicons
-                        onPress={() => navigtion.navigate("Friends")}
+                        onPress={() => navigtion.navigate("Friend Requests")}
                         name="people"
                         size={24}
                         color="black"

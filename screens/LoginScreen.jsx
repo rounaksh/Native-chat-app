@@ -9,22 +9,22 @@ const LoginScreen = () => {
     const [password, setPassword] = useState('')
     const navigation = useNavigation()
 
-    // useEffect(() => {
-    //     const checkLoginStatus = async () => {
-    //         try {
-    //             const token = await AsyncStorage.getItem("authToken")
-    //             if (token) navigation.replace('Home')
-    //         } catch (err) {
-    //             console.log("Error: ", err.message)
-    //         }
-    //     }
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                const token = await AsyncStorage.getItem("authToken")
+                if (token) navigation.replace('Home')
+            } catch (err) {
+                console.log("Error: ", err.message)
+            }
+        }
 
-    //     checkLoginStatus()
-    // }, [])
+        checkLoginStatus()
+    }, [])
 
     const handleLogin = () => {
         const user = {
-            email: email,
+            email: email.toLowerCase(),
             password: password
         }
 
@@ -57,7 +57,7 @@ const LoginScreen = () => {
                         <Text style={{ fontSize: 18, fontWeight: '600', color: 'gray' }}>Email</Text>
                         <TextInput
                             value={email}
-                            onChangeText={(text => setEmail(text))}
+                            onChangeText={(text => setEmail(text.toLowerCase()))}
                             style={{ borderBottomColor: 'gray', borderBottomWidth: 1, marginVertical: 10, width: 300 }}
                             placeholderTextColor='black'
                             placeholder='Enter Your Email'

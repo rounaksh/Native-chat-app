@@ -5,7 +5,6 @@ const cors = require('cors')
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const localStrategy = require('passport-local').Strategy
-const user = require('./models/user')
 const message = require('./models/message')
 const User = require('./models/user')
 const dotenv = require('dotenv')
@@ -62,7 +61,6 @@ const createToken = (userId) => {
 
 // Endpoint for user login
 app.post('/login', (req, res) => {
-    console.log(req.body)
     const { email, password } = req.body
 
     // Checking if email and password are provided
@@ -87,7 +85,7 @@ app.post('/login', (req, res) => {
 app.get('/users/:userId', (req, res) => {
     const loggedInUserId = req.params.userId
 
-    user.find({ _id: { $ne: loggedInUserId } }).then(users => {
+    User.find({ _id: { $ne: loggedInUserId } }).then(users => {
         res.status(201).json(users)
     }).catch(err => {
         console.log('Error: ', err.message)
@@ -125,14 +123,45 @@ app.get('/friend-request/:userId', async (req, res) => {
         const { userId } = req.params
 
         // fetching user data based on user id
-        const user = await User.findById(userId).populate('friendRequests', 'name email image').lean()
+        const user = await User.findById(userId).populate("friendRequests", "_id name email image").lean()
 
-        console.log(userId)
         const friendRequests = user.friendRequests
+        console.log(friendRequests)
         res.json(friendRequests)
     } catch (err) {
         console.log(err)
         res.sendStatus(500).json({ message: 'Internal Server Error, Try again!!' })
+    }
+})
+
+//  Endpoint to accept a frient-request of a perticular person
+app.post('/accept-friend-request', async (req, res) => {
+    try {
+        const { senderId, recepientId } = req.body
+
+        // retrieve the document of sender and the recipient
+        const sender = await User.findById(senderId)
+        const recipient = await User.findById(recepientId)
+
+        console.log(senderId)
+        sender.friends.push(recepientId)
+        recipient.friends.push(senderId)
+
+        recipient.friendRequests = recipient.friendRequests.filter(
+            (request) => request.toString() !== senderId.toString()
+        )
+
+        sender.sentFriendRequest = sender.sentFriendRequest.filter(
+            (request) => request.toString() !== recepientId.toString()
+        )
+
+        await sender.save()
+        await recipient.save()
+
+        res.status(200).json({ message: 'Friend Request accepted Successfully.' })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Internal Server Error' })
     }
 })
 
